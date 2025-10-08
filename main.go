@@ -14,7 +14,6 @@ const (
 
 var wg sync.WaitGroup
 
-// generateRandomElements generates random elements.
 func generateRandomElements(size int) []int {
 	// done
 	if size <= 0 {
@@ -25,13 +24,12 @@ func generateRandomElements(size int) []int {
 
 	elements := make([]int, size)
 	for i := 0; i < size; i++ {
-		elements[i] = rand.Intn(SIZE)
+		elements[i] = int(rand.Int())
 	}
 
 	return elements
 }
 
-// maximum returns the maximum number of elements.
 func maximum(data []int) int {
 	// done
 	if len(data) == 0 {
@@ -48,7 +46,6 @@ func maximum(data []int) int {
 	return max
 }
 
-// maxChunks returns the maximum number of elements in a chunks.
 func maxChunks(data []int) int {
 	// done
 	if len(data) == 0 {
@@ -68,27 +65,17 @@ func maxChunks(data []int) int {
 			end = len(data)
 		}
 
+		tempSlice := data[start:end] //Готовый слайс чанк
+
 		go func(index, start, end int) {
 			defer wg.Done()
-
-			localMax := data[start]
-			for j := start; j < end; j++ {
-				if data[j] > localMax {
-					localMax = data[j]
-				}
-			}
-
-			maxValues[index] = localMax
+			maxValues[index] = maximum(tempSlice)
 		}(i, start, end)
 	}
 
 	wg.Wait()
-	finalMax := maxValues[0]
-	for i := 0; i < len(maxValues); i++ {
-		if maxValues[i] > finalMax {
-			finalMax = maxValues[i]
-		}
-	}
+
+	finalMax := maximum(maxValues)
 
 	return finalMax
 }
